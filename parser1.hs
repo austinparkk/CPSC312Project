@@ -27,11 +27,13 @@ sum_row r elems = sum [read e :: Int | e <- tail (elems !! r)]
 
 sum_column r elems = sum [read e :: Int | e <- tail (select_column r elems)]
 
-average_row r elems = (fromIntegral (sum_row r elems))/ (fromIntegral ((length (head elems)) - 1))
+average_row r elems = (fromIntegral (sum_row r elems)) / (fromIntegral ((length (head elems)) - 1))
+
+average_columns r elems = (fromIntegral (sum_column r elems)) / (fromIntegral ((length (select_column r elems)) - 1))
 
 
 ---------
 
 go = readcsv "HateCrimesByRegion2016.csv"
-user  = sum_column 3
+user  = average_columns 3
                
