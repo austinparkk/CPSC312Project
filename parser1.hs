@@ -1,5 +1,3 @@
-import Data.Typeable
-csvArray = []
 
 -- splitsep (==',') "3,5,"  => ["3","5",""]
 -- splitsep delimiter ignore list
@@ -21,10 +19,19 @@ readcsv filename =
     return res
 
 select_row r elems = elems !! r
+
+select_column r [] = []
+select_column r (h:t) = (h !! r):select_column r t  
+
 sum_row r elems = sum [read e :: Int | e <- tail (elems !! r)]
+
+sum_column r elems = sum [read e :: Int | e <- tail (select_column r elems)]
+
+average_row r elems = (fromIntegral (sum_row r elems))/ (fromIntegral ((length (head elems)) - 1))
+
 
 ---------
 
 go = readcsv "HateCrimesByRegion2016.csv"
-user  = sum_row 3
+user  = sum_column 3
                
