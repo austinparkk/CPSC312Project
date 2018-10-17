@@ -18,17 +18,23 @@ readcsv filename =
     let res = user elems
     return res
 
+-- returns row r in the CSV
 select_row r elems = elems !! r
 
+-- returns columns r in the CSV
 select_column r [] = []
 select_column r (h:t) = (h !! r):select_column r t  
 
+-- returns the sum of row r in the CSV
 sum_row r elems = sum [read e :: Int | e <- tail (elems !! r)]
 
+-- returns the sum of column r in the CSV
 sum_column r elems = sum [read e :: Int | e <- tail (select_column r elems)]
 
+-- returns the average of row r in the CSV
 average_row r elems = (fromIntegral (sum_row r elems)) / (fromIntegral ((length (head elems)) - 1))
 
+-- returns the sum of column r in the CSV
 average_columns r elems = (fromIntegral (sum_column r elems)) / (fromIntegral ((length (select_column r elems)) - 1))
 
 
