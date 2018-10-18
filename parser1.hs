@@ -66,19 +66,24 @@ read_int :: (Int, Int) -> [[[Char]]] -> Int
 read_int (r,c) elems = read ((select_row r elems) !! c)
 
 -- given a cell index returns the row header
+row_name :: (Int, b) -> [[a]] -> a
 row_name (r,c) elems = (select_row r elems) !! 0
 
 --given a cell index returns the column header
+column_name :: (a1, Int) -> [[a2]] -> a2
 column_name (r,c) elems = (select_column c elems) !! 0
 
 --given a cell index returns the row header and column header as a pair 
 -- FLAG There may be a prettier way to implement this function
+row_column_name :: (Int, Int) -> [[b]] -> (b, b)
 row_column_name (r,c) elems = zip [(select_row r elems) !! 0] [(select_column c elems) !! 0] !! 0                                        
 
 --compare any two cell values and returns the coordinates of the greater value 
+compare_values :: (Int, Int) -> (Int, Int) -> [[[Char]]] -> (Int, Int)
 compare_values (r1,c1) (r2,c2) elems = (if (read_int (r1,c1) elems) > (read_int (r2,c2) elems) then (r1,c1) else (r2,c2))
 
 -- compares two column values given a specific row, and returns the corresponding header
+compare_columns :: Int -> Int -> Int -> [[[Char]]] -> [Char]
 compare_columns c1 c2 r elems = column_name (compare_values (r,c1) (r,c2) elems) elems
 
 -- compares two row values given a specific column, and returns the corresponding header
