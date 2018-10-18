@@ -17,25 +17,46 @@ readcsv filename =
     let elems = [splitsep (==',') (`elem` "\160\r\65279") line| line <- splitsep (=='\n') fls file]
     let res = user elems -- user is the function that is called by the user. so elems is the argument for that function. 
     return res
+    
+    
+----------------------------------------------------
+--Functions: 
 
 -- returns row r in the CSV
+select_row :: Int -> [a] -> a
 select_row r elems = elems !! r
 
 -- returns columns r in the CSV
+select_column :: Int -> [[a]] -> [a]
 select_column r [] = []
 select_column r (h:t) = (h !! r):select_column r t  
 
--- returns the sum of row r in the CSV
+sum_row :: Int -> [[String]] -> Int
 sum_row r elems = sum [read e :: Int | e <- tail (elems !! r)]
 
 -- returns the sum of column r in the CSV
+sum_column :: Int -> [[String]] -> Int
 sum_column r elems = sum [read e :: Int | e <- tail (select_column r elems)]
 
 -- returns the average of row r in the CSV
+average_row :: Fractional a => Int -> [[String]] -> a
 average_row r elems = (fromIntegral (sum_row r elems)) / (fromIntegral ((length (head elems)) - 1))
 
--- returns the average of column r in the CSV
+-- returns the sum of column r in the CSV
+average_columns :: Fractional a => Int -> [[String]] -> a
 average_columns r elems = (fromIntegral (sum_column r elems)) / (fromIntegral ((length (select_column r elems)) - 1))
+
+min_row :: Int -> [[String]] -> Int
+min_row r elems = minimum (map (\ x ->  read x :: Int) (tail (select_row r elems)))
+
+max_row :: Int -> [[String]] -> Int
+max_row r elems = maximum (map (\ x ->  read x :: Int) (tail (select_row r elems)))
+
+min_column :: Int -> [[String]] -> Int
+min_column r elems = minimum (map (\ x ->  read x :: Int) (tail (select_column r elems)))
+
+max_column :: Int -> [[String]] -> Int
+max_column r elems = maximum (map (\ x ->  read x :: Int) (tail (select_column r elems)))
 
 -- returns value in row r and column c as Char
 select_value (r,c) elems = (select_row r elems) !! c
@@ -68,10 +89,11 @@ compare_columns c1 c2 r elems = column_name (compare_values (r,c1) (r,c2) elems)
 --COUNTIF
 
 --CONCATENATE
-
-----------------------------------------
+---------
 
 go = readcsv "HateCrimesByRegion2016.csv"
+user  = max_row 7
+
 --user  = average_columns 3
 --user = select_row 1
 --user = select_column 0 
@@ -80,6 +102,7 @@ go = readcsv "HateCrimesByRegion2016.csv"
 --user = compare_values (1,1) (2,2)
 --user = row_column_name (1,1)
 --user = compare_values (2,2) (2,3) 
-user = compare_columns 2 3 4 
+--user = compare_columns 2 3 4 
 --user = column_name (0,8)
+
                
