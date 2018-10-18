@@ -23,7 +23,7 @@ readcsv filename =
 select_row r elems = elems !! r
 sum_row r elems = sum [read e :: Int | e <- tail (elems !! r)]
 
----------
+---------------------------------------------------------------------------------------------------
 
 go = readcsv "HateCrimesByRegion2016.csv"
 user  = sum_row 3
