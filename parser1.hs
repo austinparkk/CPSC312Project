@@ -37,8 +37,12 @@ average_row r elems = (fromIntegral (sum_row r elems)) / (fromIntegral ((length 
 -- returns the average of column r in the CSV
 average_columns r elems = (fromIntegral (sum_column r elems)) / (fromIntegral ((length (select_column r elems)) - 1))
 
--- returns value in row r and column c 
+-- returns value in row r and column c as Char
 select_value (r,c) elems = (select_row r elems) !! c
+
+-- returns value in row r and column c by casting the Char to type Int
+read_int :: (Int, Int) -> [[[Char]]] -> Int
+read_int (r,c) elems = read ((select_row r elems) !! c)
 
 -- given a cell index returns the row header
 row_name (r,c) elems = (select_row r elems) !! 0
@@ -51,12 +55,10 @@ column_name (r,c) elems = (select_column c elems) !! 0
 row_column_name (r,c) elems = zip [(select_row r elems) !! 0] [(select_column c elems) !! 0] !! 0                                        
 
 --compare any two cell values and returns the coordinates of the greater value 
--- FLAG THIS OUTPUTS THE WRONG VALUE !!
-compare_values (r1,c1) (r2,c2) elems = (if (select_value (r1,c1) elems) > (select_value (r2,c2) elems) then (r1,c1) else (r2,c2))
+compare_values (r1,c1) (r2,c2) elems = (if (read_int (r1,c1) elems) > (read_int (r2,c2) elems) then (r1,c1) else (r2,c2))
 
 -- compares two column values given a specific row, and returns the corresponding header
--- FLAG WRONG OUTPUT DUE TO PREVIOUS FUNCTION
-compare_columns r c1 c2 elems = column_name (compare_values (r,c1) (r,c2) elems) elems
+compare_columns c1 c2 r elems = column_name (compare_values (r,c1) (r,c2) elems) elems
 
 -- compares two row values given a specific column, and returns the corresponding header
 --compare_rows r1 r2 c f elems = 
@@ -74,9 +76,10 @@ go = readcsv "HateCrimesByRegion2016.csv"
 --user = select_row 1
 --user = select_column 0 
 --user = select_value (2,4)
+--user = read_value (2,4) 
 --user = compare_values (1,1) (2,2)
 --user = row_column_name (1,1)
---user = compare_values (2,2) (2,4) --wrong output
---user = compare_columns 2 3 4 
-user = column_name (0,8)
+--user = compare_values (2,2) (2,3) 
+user = compare_columns 2 3 4 
+--user = column_name (0,8)
                
