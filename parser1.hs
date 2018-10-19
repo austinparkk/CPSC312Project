@@ -59,7 +59,7 @@ max_column :: Int -> [[String]] -> Int
 max_column r elems = maximum (map (\ x ->  read x :: Int) (tail (select_column r elems)))
 
 -- returns value in row r and column c as Char
-select_value :: (Int, Int) -> [[[Char]]] -> Char
+select_value :: (Int, Int) -> [[[Char]]] -> [Char]
 select_value (r,c) elems = (select_row r elems) !! c
 
 -- returns value in row r and column c by casting the Char to type Int
@@ -75,7 +75,6 @@ column_name :: (a1, Int) -> [[a2]] -> a2
 column_name (r,c) elems = (select_column c elems) !! 0
 
 --given a cell index returns the row header and column header as a pair 
--- FLAG There may be a prettier way to implement this function
 row_column_name :: (Int, Int) -> [[b]] -> (b, b)
 row_column_name (r,c) elems = zip [(select_row r elems) !! 0] [(select_column c elems) !! 0] !! 0                                        
 
@@ -88,14 +87,10 @@ compare_columns :: Int -> Int -> Int -> [[[Char]]] -> [Char]
 compare_columns c1 c2 r elems = column_name (compare_values (r,c1) (r,c2) elems) elems
 
 -- compares two row values given a specific column, and returns the corresponding header
---compare_rows r1 r2 c f elems = 
+compare_rows :: Int -> Int -> Int -> [[[Char]]] -> [Char]
+compare_rows r1 r2 c elems = row_name (compare_values (r1,c) (r2,c) elems) elems
 
---SUMIF
-
---COUNTIF
-
---CONCATENATE
----------
+---------------
 
 go = readcsv "HateCrimesByRegion2016.csv"
 user  = max_row 7
