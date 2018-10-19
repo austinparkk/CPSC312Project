@@ -31,6 +31,7 @@ select_column :: Int -> [[a]] -> [a]
 select_column r [] = []
 select_column r (h:t) = (h !! r):select_column r t  
 
+-- returns the sum of row r in the CSV
 sum_row :: Int -> [[String]] -> Int
 sum_row r elems = sum [read e :: Int | e <- tail (elems !! r)]
 
@@ -46,15 +47,19 @@ average_row r elems = (fromIntegral (sum_row r elems)) / (fromIntegral ((length 
 average_columns :: Fractional a => Int -> [[String]] -> a
 average_columns r elems = (fromIntegral (sum_column r elems)) / (fromIntegral ((length (select_column r elems)) - 1))
 
+-- returns the minimum value from the selected row
 min_row :: Int -> [[String]] -> Int
 min_row r elems = minimum (map (\ x ->  read x :: Int) (tail (select_row r elems)))
 
+-- returns the maximum value from the selected row
 max_row :: Int -> [[String]] -> Int
 max_row r elems = maximum (map (\ x ->  read x :: Int) (tail (select_row r elems)))
 
+-- returns the minimum value from the selected column
 min_column :: Int -> [[String]] -> Int
 min_column r elems = minimum (map (\ x ->  read x :: Int) (tail (select_column r elems)))
 
+-- returns the maximum value from the selected column
 max_column :: Int -> [[String]] -> Int
 max_column r elems = maximum (map (\ x ->  read x :: Int) (tail (select_column r elems)))
 
@@ -105,5 +110,6 @@ user  = max_row 7
 --user = compare_values (2,2) (2,3) 
 --user = compare_columns 2 3 4 
 --user = column_name (0,8)
+--user = max_column 1
 
                
