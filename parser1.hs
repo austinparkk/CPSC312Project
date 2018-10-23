@@ -1,4 +1,8 @@
 
+module Localparser where
+
+import System.Exit
+
 -- splitsep (==',') "3,5,"  => ["3","5",""]
 -- splitsep delimiter ignore list
 splitsep _ _ [] = [[]]
@@ -8,19 +12,51 @@ splitsep sep ig (h:t)
     | otherwise = ((h:w):rest)
                 where w:rest = splitsep sep ig t
 
+
+--go :: IO (a, Int) type of the function go??
+go = beginprogram "HateCrimesByRegion2016.csv"
+
+
 fls x = False
-readcsv filename =
+beginprogram filename =
   do
+    putStrLn "The following functions are available: \n \n 1.  select_row \n 2.  select_column \n 3.  sum_row \n 4.  sum_column \n 5.  average_row \n 6.  average_column \n 7.  min_row \n 8.  max_row \n 9.  min_column \n 10. max_column \n 11. select_value \n 12. read_int \n 13. row_name \n 14. column_name \n 15. row_column_name \n 16. compare_values \n 17. compare_columns \n 18. compare_rows \n To start please type in the function and its corresponding parameters"
     file <- readFile filename
-    --let csvArray = [splitsep (==',') line| line <- splitsep (=='\n') file]
-    --print (typeOf csvArray)
     let elems = [splitsep (==',') (`elem` "\160\r\65279") line| line <- splitsep (=='\n') fls file]
-    let res = user elems -- user is the function that is called by the user. so elems is the argument for that function. 
+    func <- getLine
+    let commands = splitsep (==' ') (`elem` "") func
+    let res = lookupfun commands elems
     return res
-    
-    
-----------------------------------------------------
---Functions: 
+
+
+lookupfun :: [String] -> [[String]] -> String
+lookupfun args dataset
+    | args == "select_row":(tail args) = show (select_row (read (head (tail args))) dataset)
+    | args == "select_column":(tail args) = show (select_column (read (head (tail args))) dataset)
+    | args == "sum_row":(tail args) = show (sum_row (read (head (tail args))) dataset)
+    | args == "sum_column":(tail args) = show (sum_column (read (head (tail args))) dataset)
+    | args == "average_row":(tail args) = show (average_row (read (head (tail args))) dataset)
+    | args == "average_column":(tail args) = show (average_column (read (head (tail args))) dataset)
+    | args == "min_row":(tail args) = show (min_row (read (head (tail args))) dataset)
+    | args == "max_row":(tail args) = show (max_row (read (head (tail args))) dataset)
+    | args == "min_column":(tail args) = show (min_column (read (head (tail args))) dataset)
+    | args == "max_column":(tail args) = show (max_column (read (head (tail args))) dataset)
+    | args == "select_value":(tail args) = show (select_value (read (head (tail args))) dataset) --gives weird extar \'s and '
+    | args == "row_name":(tail args) = show (row_name (read (head (tail args))) dataset)
+    | args == "column_name":(tail args) = show (column_name (read (head (tail args))) dataset)
+    | args == "row_column_name":(tail args) = show (row_column_name (read (head (tail args))) dataset)
+    | args == "compare_values":(tail args) = show (compare_values (read (head (tail args))) (read (head (tail (tail args)))) dataset)
+    | args == "compare_columns":(tail args) = show (compare_columns (read (head (tail args))) (read (head (tail (tail args)))) (read (head (tail (tail (tail args))))) dataset)
+    | args == "compare_rows":(tail args) = show (compare_rows (read (head (tail args))) (read (head (tail (tail args)))) (read (head (tail (tail (tail args))))) dataset)
+    | otherwise = "Sorry, that is an invalid input. Please try again"
+
+
+
+
+
+---------------------------------------------------- 
+
+--Data Functions:
 
 -- returns row r in the CSV
 select_row :: Int -> [a] -> a
@@ -44,8 +80,8 @@ average_row :: Fractional a => Int -> [[String]] -> a
 average_row r elems = (fromIntegral (sum_row r elems)) / (fromIntegral ((length (head elems)) - 1))
 
 -- returns the sum of column r in the CSV
-average_columns :: Fractional a => Int -> [[String]] -> a
-average_columns r elems = (fromIntegral (sum_column r elems)) / (fromIntegral ((length (select_column r elems)) - 1))
+average_column :: Fractional a => Int -> [[String]] -> a
+average_column r elems = (fromIntegral (sum_column r elems)) / (fromIntegral ((length (select_column r elems)) - 1))
 
 -- returns the minimum value from the selected row
 min_row :: Int -> [[String]] -> Int
@@ -72,11 +108,11 @@ read_int :: (Int, Int) -> [[[Char]]] -> Int
 read_int (r,c) elems = read ((select_row r elems) !! c)
 
 -- given a cell index returns the row header
-row_name :: (Int, b) -> [[a]] -> a
+row_name :: (Int, Int) -> [[a]] -> a
 row_name (r,c) elems = (select_row r elems) !! 0
 
 --given a cell index returns the column header
-column_name :: (a1, Int) -> [[a2]] -> a2
+column_name :: (Int, Int) -> [[a2]] -> a2
 column_name (r,c) elems = (select_column c elems) !! 0
 
 --given a cell index returns the row header and column header as a pair 
@@ -97,19 +133,14 @@ compare_rows r1 r2 c elems = row_name (compare_values (r1,c) (r2,c) elems) elems
 
 ---------------
 
-go = readcsv "HateCrimesByRegion2016.csv"
-user  = max_row 7
-
 --user  = average_columns 3
 --user = select_row 1
---user = select_column 0 
+--user = select_column 0
 --user = select_value (2,4)
---user = read_value (2,4) 
+--user = read_value (2,4)
 --user = compare_values (1,1) (2,2)
 --user = row_column_name (1,1)
---user = compare_values (2,2) (2,3) 
---user = compare_columns 2 3 4 
+--user = compare_values (2,2) (2,3)
+--user = compare_columns 2 3 4
 --user = column_name (0,8)
 --user = max_column 1
-
-               
